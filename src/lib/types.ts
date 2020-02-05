@@ -1,17 +1,21 @@
 export type NotionObject = {
   id: string;
   type:
-    | 'page'
-    | 'text'
-    | 'header'
-    | 'sub_header'
-    | 'sub_sub_header'
-    | 'divider'
-    | 'break'
-    | 'numbered_list'
-    | 'bulleted_list';
+  | 'page'
+  | 'text'
+  | 'header'
+  | 'sub_header'
+  | 'sub_sub_header'
+  | 'divider'
+  | 'break'
+  | 'numbered_list'
+  | 'bulleted_list'
+  | 'image'
+  | 'video'
+  | 'to_do'
+  | 'toggle';
   properties: {
-    source?: Array<Array<string>>;
+    source: string;
     title?: Array<Array<string>>;
   };
   format: {
@@ -19,6 +23,7 @@ export type NotionObject = {
     page_cover: string;
     page_cover_position: number;
     block_color: string;
+    display_source: string;
   };
 };
 
