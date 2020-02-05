@@ -15,7 +15,10 @@ const types = {
   break: 'br',
   numbered_list: 'ol',
   bulleted_list: 'ul',
-  image: 'img'
+  image: 'img',
+  video: 'iframe',
+  to_do: 'div',
+  toggle: 'div'
 };
 
 /**
@@ -28,7 +31,7 @@ function formatToHtml(
   options: Options,
   index: number
 ) {
-  let { type, properties, format } = ObjectToParse;
+  let { type, properties, format, id } = ObjectToParse;
   // Get color
   const color = format && format.block_color;
   // Replace color with custom color if passed
@@ -41,9 +44,8 @@ function formatToHtml(
     properties &&
     properties.title &&
     properties.title[0][0].replace(/\[.*\]:.{1,}/, '');
-  const source =
-    properties &&
-    properties.source;
+  const contentInfo = properties && properties.title;
+  const source = properties && properties.source;
   const tags = (content && content[0] ? content[0][0] : '').match(
     /\[.{1,}\]: .{1,}/
   );
@@ -53,6 +55,7 @@ function formatToHtml(
       [attrib[0]]: attrib[1].trim()
     };
   }
+  const displaySource = format && format.display_source;
 
   // Only set Style if passed
   const property =
@@ -81,12 +84,49 @@ function formatToHtml(
     case types.break: {
       return `<${types.break} />`;
     }
-    case types.numbered_list:
+    case types.numbered_list: {
+      return `<li${style}>${content}</li>`;
+    }
     case types.bulleted_list: {
       return `<li${style}>${content}</li>`;
     }
     case types.image: {
-      return `<${types.image}${style} src="${source}" />`;
+      const imageURL: string = `https://www.notion.so/image/${encodeURIComponent(
+        source
+      )}?table=block&id=${id}&width=1000&cache=v2`;
+      return `<${types.image} ${style} src="${imageURL}" />`;
+    }
+    case types.video: {
+      //builds the iframe to embed videos from notion
+      const videoURL: string = displaySource;
+      return `<div class="notion__video"><${types.video} ${style} src="${videoURL}" allowfullscreen></${types.video}></div>`;
+    }
+    case types.to_do: {
+      return `<div${style} class="notion__checkboxes"><input type="checkbox">${content}</div>`;
+    }
+    case types.toggle: {
+      console.log(contentInfo);
+      return `<div${style} class="notion__toggle">${content}</div>`;
+    }
+    case types.text: {
+      //contentInfo basically is the title attribute
+      if(contentInfo){
+        if(contentInfo[0][1]){
+          //tagType is e.g. 'a' and tagValue the value e.g. from href
+          const tagType = contentInfo[0][1][0][0];
+          const tagValue = contentInfo[0][1][0][1];
+          //console.log(contentInfo[0][1][0][0]);
+          //build the links/anchor tags
+          if(tagType === 'a'){
+            return `<${types.text}${style}>${`<${tagType} href="${tagValue}" target="_blank">${content}</${tagType}>`}</${types.text}>`;
+          }
+          if(tagType == 'b' || tagType === 'i'){
+            //build 'b' and 'i' tags
+            return `<${types.text}${style}>${`<${tagType}>${content}</${tagType}>`}</${types.text}>`;
+          }
+        }
+      }
+        return `<${types[type]}${style}>${content}</${types[type]}>`;
     }
     default: {
       if (types[type])
@@ -106,6 +146,38 @@ function formatList(ObjectList: Array<NotionObject>, options: Options) {
   const attributes: Attributes = {};
   for (let index = 0; index < ObjectList.length; index += 1) {
     const element = ObjectList[index];
+    //logging
+    if (element.type === 'image') {
+      //let url: string = element.format.display_source;
+      //console.log(element.properties);
+      //console.log(encodeURIComponent(url));
+    }
+    if(element.type === 'video'){
+      //console.log(element.properties);
+      //console.log(element.format);
+    }
+    if(element.type === 'to_do'){
+      //console.log(element.properties);
+      //console.log(element.format);
+    }
+    if(element.type === 'toggle'){
+      //console.log(element.properties);
+      //console.log(element.format);
+    }
+    if(element.type === 'page'){
+      //console.log(element.properties);
+      //console.log(element.format);
+    }
+    if(element.type === 'text'){
+      if(element.properties){
+        if(element.properties.title){
+            //console.log(element.properties.title);
+        }
+      }
+    }
+    //logging
+    //console.log(element.type);
+
     let html = formatToHtml(element, options, index);
     if (html && typeof html === 'object') {
       const keys = Object.keys(html as Attributes);
@@ -136,7 +208,8 @@ function formatList(ObjectList: Array<NotionObject>, options: Options) {
     }
   }
   const { format, properties } = ObjectList[0];
-  const title = (properties && properties.title && properties.title[0][0]) || '';
+  const title =
+    (properties && properties.title && properties.title[0][0]) || '';
   const cover =
     format && format.page_cover
       ? format.page_cover.includes('http')
