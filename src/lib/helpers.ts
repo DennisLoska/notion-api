@@ -18,8 +18,9 @@ const types = {
   image: 'img',
   video: 'iframe',
   to_do: 'div',
-  toggle: 'section',
-  file: 'article'
+  toggle: '',
+  file: 'article',
+  table_of_contents: 'section'
 };
 
 /**
@@ -75,6 +76,7 @@ function formatToHtml(
   switch (types[type]) {
     case types.page: {
       if (index === 0) {
+
         return `<h1 ${style}>${content}</h1>`;
       }
       return null;
@@ -95,8 +97,6 @@ function formatToHtml(
       const imageURL: string = `https://www.notion.so/image/${encodeURIComponent(
         source
       )}?table=block&id=${id}&width=1000&cache=v2`;
-      console.log(id);
-      
       return `<${types.image} ${style} src="${imageURL}" />`;
     }
     case types.video: {
@@ -120,8 +120,7 @@ function formatToHtml(
       //console.log(contentInfo[0][1][0][0]);
       //build the links/anchor tags
       if (tagType === 'a') {
-        console.log(types);
-        
+        //console.log(types);
         return `<${types.text}${style}>${`<${tagType} href="${tagValue}" target="_blank">${content}</${tagType}>`}</${types.text}>`;
       }
       else if (tagType == 'b' || tagType === 'i') {
@@ -132,6 +131,14 @@ function formatToHtml(
     }
     case types.file: {
       return `<a href="${source}" download>${content}</a>`;
+    }
+    case types.sub_header: {
+      if(content){
+        return `<${types.sub_header} id="${content.replace(/\s/g,'')}" class="notion__sub-header notion__content-header" ${style}>${content}</${types.sub_header}>`;
+      } else return '';
+    }
+    case types.sub_sub_header: {
+        return content && `<${types.sub_sub_header} id="${content.replace(/\s/g,'')}" class="notion__sub-sub-header notion__content-header" ${style}>${content}</${types.sub_sub_header}>`;
     }
     default: {
       if (types[type])
@@ -174,10 +181,17 @@ function formatList(ObjectList: Array<NotionObject>, options: Options) {
       //console.log(element.format);
     }
     if (element.type === 'text') {
-      //console.log(element.properties.title);
+      //console.log(element.properties);
+      //console.log(element.format);
+      
     }
     if(element.type === 'file') {
       //console.log(element.properties);
+    }
+    if(element.type === 'table_of_contents'){
+      //console.log(element);
+      //console.log(element.properties);
+      //console.log(element.format);
     }
     //logging
     //console.log(element.type);

@@ -14,7 +14,8 @@ export type NotionObject = {
   | 'video'
   | 'to_do'
   | 'toggle'
-  | 'file';
+  | 'file'
+  | 'table_of_contents';
   properties: {
     source: string;
     title?: Array<Array<string>>;
