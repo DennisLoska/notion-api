@@ -2,7 +2,7 @@ import Notion from './src/notion';
 
 const options = {
   token_v2:
-    '4054b4798589e93d0888cededd508f341919180e18fd8825c4d7a55b8e60c1785e4615c8173b869231a47fe5f2d91efd61e908a75e3f09ac5fe95586c5eaf6c90613917e28c316d225bf9d3ad099'
+    ''
 };
 
 const api = new Notion({

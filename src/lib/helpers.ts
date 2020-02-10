@@ -18,7 +18,8 @@ const types = {
   image: 'img',
   video: 'iframe',
   to_do: 'div',
-  toggle: 'section'
+  toggle: 'section',
+  file: 'article'
 };
 
 /**
@@ -94,6 +95,8 @@ function formatToHtml(
       const imageURL: string = `https://www.notion.so/image/${encodeURIComponent(
         source
       )}?table=block&id=${id}&width=1000&cache=v2`;
+      console.log(id);
+      
       return `<${types.image} ${style} src="${imageURL}" />`;
     }
     case types.video: {
@@ -106,7 +109,7 @@ function formatToHtml(
     }
     case types.toggle: {
       let toggleContent = contentInfo && contentInfo[0][1];
-      toggleContent = 'DROPDOWNS ARE NOT SUPPORTED YET'
+      toggleContent = 'Notion dropdown elements are NOT SUPPORTED yet'
       return `<section${style} class="notion__toggle">${content} <div class="notion__toggle--content">${toggleContent}</div></section>`;
     }
     case types.text: {
@@ -117,6 +120,8 @@ function formatToHtml(
       //console.log(contentInfo[0][1][0][0]);
       //build the links/anchor tags
       if (tagType === 'a') {
+        console.log(types);
+        
         return `<${types.text}${style}>${`<${tagType} href="${tagValue}" target="_blank">${content}</${tagType}>`}</${types.text}>`;
       }
       else if (tagType == 'b' || tagType === 'i') {
@@ -124,6 +129,9 @@ function formatToHtml(
         return `<${types.text}${style}>${`<${tagType}>${content}</${tagType}>`}</${types.text}>`;
       }
       else return `<${types[type]}${style}>${content}</${types[type]}>`;
+    }
+    case types.file: {
+      return `<a href="${source}" download>${content}</a>`;
     }
     default: {
       if (types[type])
@@ -143,7 +151,7 @@ function formatList(ObjectList: Array<NotionObject>, options: Options) {
   const attributes: Attributes = {};
   for (let index = 0; index < ObjectList.length; index += 1) {
     const element = ObjectList[index];
-    //logging
+    //logging - can be removed
     if (element.type === 'image') {
       //let url: string = element.format.display_source;
       //console.log(element.properties);
@@ -167,6 +175,9 @@ function formatList(ObjectList: Array<NotionObject>, options: Options) {
     }
     if (element.type === 'text') {
       //console.log(element.properties.title);
+    }
+    if(element.type === 'file') {
+      //console.log(element.properties);
     }
     //logging
     //console.log(element.type);
