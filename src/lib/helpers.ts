@@ -18,7 +18,7 @@ const types = {
   image: 'img',
   video: 'iframe',
   to_do: 'div',
-  toggle: 'div'
+  toggle: 'section'
 };
 
 /**
@@ -105,28 +105,25 @@ function formatToHtml(
       return `<div${style} class="notion__checkboxes"><input type="checkbox">${content}</div>`;
     }
     case types.toggle: {
-      console.log(contentInfo);
-      return `<div${style} class="notion__toggle">${content}</div>`;
+      let toggleContent = contentInfo && contentInfo[0][1];
+      toggleContent = 'DROPDOWNS ARE NOT SUPPORTED YET'
+      return `<section${style} class="notion__toggle">${content} <div class="notion__toggle--content">${toggleContent}</div></section>`;
     }
     case types.text: {
       //contentInfo basically is the title attribute
-      if(contentInfo){
-        if(contentInfo[0][1]){
-          //tagType is e.g. 'a' and tagValue the value e.g. from href
-          const tagType = contentInfo[0][1][0][0];
-          const tagValue = contentInfo[0][1][0][1];
-          //console.log(contentInfo[0][1][0][0]);
-          //build the links/anchor tags
-          if(tagType === 'a'){
-            return `<${types.text}${style}>${`<${tagType} href="${tagValue}" target="_blank">${content}</${tagType}>`}</${types.text}>`;
-          }
-          if(tagType == 'b' || tagType === 'i'){
-            //build 'b' and 'i' tags
-            return `<${types.text}${style}>${`<${tagType}>${content}</${tagType}>`}</${types.text}>`;
-          }
-        }
+      //tagType is e.g. 'a' and tagValue the value e.g. from href
+      const tagType = contentInfo && contentInfo[0][1] && contentInfo[0][1][0][0];
+      const tagValue = contentInfo && contentInfo[0][1] && contentInfo[0][1][0][1];
+      //console.log(contentInfo[0][1][0][0]);
+      //build the links/anchor tags
+      if (tagType === 'a') {
+        return `<${types.text}${style}>${`<${tagType} href="${tagValue}" target="_blank">${content}</${tagType}>`}</${types.text}>`;
       }
-        return `<${types[type]}${style}>${content}</${types[type]}>`;
+      else if (tagType == 'b' || tagType === 'i') {
+        //build 'b' and 'i' tags
+        return `<${types.text}${style}>${`<${tagType}>${content}</${tagType}>`}</${types.text}>`;
+      }
+      else return `<${types[type]}${style}>${content}</${types[type]}>`;
     }
     default: {
       if (types[type])
@@ -152,28 +149,24 @@ function formatList(ObjectList: Array<NotionObject>, options: Options) {
       //console.log(element.properties);
       //console.log(encodeURIComponent(url));
     }
-    if(element.type === 'video'){
+    if (element.type === 'video') {
       //console.log(element.properties);
       //console.log(element.format);
     }
-    if(element.type === 'to_do'){
+    if (element.type === 'to_do') {
       //console.log(element.properties);
       //console.log(element.format);
     }
-    if(element.type === 'toggle'){
+    if (element.type === 'toggle') {
       //console.log(element.properties);
       //console.log(element.format);
     }
-    if(element.type === 'page'){
+    if (element.type === 'page') {
       //console.log(element.properties);
       //console.log(element.format);
     }
-    if(element.type === 'text'){
-      if(element.properties){
-        if(element.properties.title){
-            //console.log(element.properties.title);
-        }
-      }
+    if (element.type === 'text') {
+      //console.log(element.properties.title);
     }
     //logging
     //console.log(element.type);

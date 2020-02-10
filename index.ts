@@ -2,7 +2,7 @@ import Notion from './src/notion';
 
 const options = {
   token_v2:
-    'ea74addc8fedac245edf80a6a39c77f4e5319ffbfe6e7bc12073b23eed557ef8d5a89de4aa5f43bef24c64d1f70b7895e8e1303a0913e0f773abe92f20ba838556f6177e9f8b680296e90285ee55'
+    '4054b4798589e93d0888cededd508f341919180e18fd8825c4d7a55b8e60c1785e4615c8173b869231a47fe5f2d91efd61e908a75e3f09ac5fe95586c5eaf6c90613917e28c316d225bf9d3ad099'
 };
 
 const api = new Notion({
@@ -18,8 +18,10 @@ const api = new Notion({
 });
 
 // Use the api here
+//01128265-8b1c-4205-bbef-5e1175884f73
+//ff95ee49-5fc2-470c-bcc8-e6926595d390
 
 (async () => {
-  const p = await api.getAllHTML();
+  const p = await api.getPagesByIndexId('01128265-8b1c-4205-bbef-5e1175884f73');
   console.log(p[0]);
 })();

@@ -20,7 +20,7 @@ function request({
     },
     body: JSON.stringify({
       ...body,
-      limit: 50,
+      limit: 999,
       cursor: { stack: [] },
       chunkNumber: 0,
       verticalColumns: false
