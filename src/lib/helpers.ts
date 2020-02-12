@@ -70,7 +70,9 @@ function formatToHtml(
 
   // Set type to break if no content is existent
   if (!content && type !== 'divider' && !source) {
-    type = 'break';
+    if(type === 'table_of_contents')
+      type = 'table_of_contents';
+    else type = 'break';
   }
   // Create HTML Tags with content
   switch (types[type]) {
