@@ -18,9 +18,9 @@ const types = {
   image: 'img',
   video: 'iframe',
   to_do: 'div',
-  toggle: '',
+  table_of_contents: 'section',
   file: 'article',
-  table_of_contents: 'section'
+  toggle: 'span',
 };
 
 /**
@@ -76,8 +76,7 @@ function formatToHtml(
   switch (types[type]) {
     case types.page: {
       if (index === 0) {
-
-        return `<h1 ${style}>${content}</h1>`;
+        return `<h1 ${style} class="notion__main-header notion__content-header" >${content}</h1>`;
       }
       return null;
     }
@@ -130,15 +129,19 @@ function formatToHtml(
       else return `<${types[type]}${style}>${content}</${types[type]}>`;
     }
     case types.file: {
-      return `<a href="${source}" download>${content}</a>`;
+      return `<a href="${source}" ${style} download>${content}</a>`;
+    }
+    case types.header: {
+        return content && `<${types.header} id="${content.replace(/\s/g,'')}" class="notion__main-header notion__content-header" ${style}>${content}</${types.header}>`;
     }
     case types.sub_header: {
-      if(content){
-        return `<${types.sub_header} id="${content.replace(/\s/g,'')}" class="notion__sub-header notion__content-header" ${style}>${content}</${types.sub_header}>`;
-      } else return '';
+        return content && `<${types.sub_header} id="${content.replace(/\s/g,'')}" class="notion__sub-header notion__content-header" ${style}>${content}</${types.sub_header}>`;
     }
     case types.sub_sub_header: {
         return content && `<${types.sub_sub_header} id="${content.replace(/\s/g,'')}" class="notion__sub-sub-header notion__content-header" ${style}>${content}</${types.sub_sub_header}>`;
+    }
+    case types.table_of_contents: {
+      return `<${types.table_of_contents} ${style} id="notion__table-of-contents" ></${types.table_of_contents}>`;
     }
     default: {
       if (types[type])
@@ -193,7 +196,7 @@ function formatList(ObjectList: Array<NotionObject>, options: Options) {
       //console.log(element.properties);
       //console.log(element.format);
     }
-    //logging
+    //log all elements
     //console.log(element.type);
 
     let html = formatToHtml(element, options, index);
