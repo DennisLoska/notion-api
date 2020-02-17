@@ -78,7 +78,7 @@ function formatToHtml(
   switch (types[type]) {
     case types.page: {
       if (index === 0) {
-        return `<h1 ${style} class="notion__main-header notion__content-header" >${content}</h1>`;
+        return content && `<h1 ${style} id="${content.replace(/\s/g,'')}" lass="notion__main-header notion__content-header" >${content}</h1>`;
       }
       return null;
     }
